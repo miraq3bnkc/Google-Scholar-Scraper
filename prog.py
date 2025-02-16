@@ -52,7 +52,7 @@ def scrape_articles():
 # Create the main window
 window = tk.Tk()
 window.title("Google Scholar Scraper")
-window.geometry("400x250")
+window.geometry("400x300")
 
 # Create input fields and labels
 label_query = tk.Label(window, text="Article Title or Keyword:")
