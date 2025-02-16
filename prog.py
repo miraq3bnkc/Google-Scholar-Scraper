@@ -4,11 +4,11 @@ import pandas as pd
 import tkinter as tk
 from tkinter import filedialog
 
-def scrape_scholar_articles(query, num_pages):
+def scrape_scholar_articles(query, num_pages, year_low, year_high):
     articles = []
     page = 0
     while page < num_pages:
-        url = f"https://scholar.google.com/scholar?start={page*10}&q={query}&hl=en&as_sdt=0,5"
+        url = f"https://scholar.google.com/scholar?start={page*10}&q={query}&hl=el&as_ylo={year_low}&as_yhi={year_high}"
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
         results = soup.find_all("div", class_="gs_ri")
@@ -35,8 +35,10 @@ def browse_folder():
 def scrape_articles():
     query = entry_query.get()
     num_pages = int(entry_pages.get())
+    year_low = int(year1.get())
+    year_high = int(year2.get())
 
-    articles = scrape_scholar_articles(query, num_pages)
+    articles = scrape_scholar_articles(query, num_pages, year_low, year_high)
 
     folder_path = entry_folder.get()
     if folder_path:
@@ -63,6 +65,26 @@ label_pages.pack()
 entry_pages = tk.Entry(window, width=40)
 entry_pages.pack()
 
+# Year range section
+label_years = tk.Label(window, text="Year range of results:")
+label_years.pack()
+
+frame_years = tk.Frame(window)  # Frame to hold the year inputs
+frame_years.pack()
+
+label_from = tk.Label(frame_years, text="From:")
+label_from.grid(row=0, column=0, padx=5)
+
+year1 = tk.Entry(frame_years, width=10)
+year1.grid(row=0, column=1, padx=5)
+
+label_till = tk.Label(frame_years, text="Till:")
+label_till.grid(row=0, column=2, padx=5)
+
+year2 = tk.Entry(frame_years, width=10)
+year2.grid(row=0, column=3, padx=5)
+
+# Folder Section
 label_folder = tk.Label(window, text="Output Folder (optional):")
 label_folder.pack()
 entry_folder = tk.Entry(window, width=40)
