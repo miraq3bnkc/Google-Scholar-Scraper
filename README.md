@@ -52,3 +52,6 @@ Install the required dependencies using pip: pip install requests beautifulsoup4
 
 Run the program using Python: python scholar_scraper.py.
 
+## Features added in this fork:
+
+1- Filters results by year range
