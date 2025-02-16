@@ -22,6 +22,8 @@ The Google Scholar Scraper is a Python program that allows users to extract arti
 
 2- Specify the number of pages to scrape in the "Number of Pages" field.
 
+3- Input the year range you want to search for articles (not optional). 
+
 3- (Optional) Provide the output folder where the Excel file will be saved.
 
 4- Click the "Browse" button to select the output folder.
