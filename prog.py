@@ -4,6 +4,40 @@ import pandas as pd
 import tkinter as tk
 from tkinter import filedialog
 
+def extract_abstract(article_url):
+    """Attempts to extract the abstract from an article page."""
+    try:
+        response = requests.get(article_url, timeout=10)
+        if response.status_code != 200:
+            if response.status_code == 403:
+                #some sites block scraping
+                return "Forbitten 403"
+            else:
+                return "Abstract not found"
+
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        # Define possible abstract locations
+        abstract_selectors = [
+            'section#abstract div[role="paragraph"]',  # Example 1
+            'div.c-article-section__content',  # Example 2
+            'section#abstract p',  # Example 3
+            'div.Abstract__block__text p',  # Example 4
+            'div.abstract',  # Generic case
+            'p.abstract',  # Another possible case
+        ]
+
+        # Try each selector
+        for selector in abstract_selectors:
+            abstract_element = soup.select_one(selector)
+            if abstract_element:
+                return abstract_element.get_text(strip=True)
+
+        return "Abstract not found"
+
+    except Exception as e:
+        return f"Error fetching abstract: {str(e)}"
+
 def scrape_scholar_articles(query, num_pages, year_low, year_high):
     articles = []
     page = 0
@@ -17,7 +51,14 @@ def scrape_scholar_articles(query, num_pages, year_low, year_high):
             title = result.find("h3", class_="gs_rt").text
             authors = result.find("div", class_="gs_a").text
             link = result.find("a")["href"]
-            articles.append({"Title": title, "Authors": authors, "Link": link})
+            abstract = extract_abstract(link)  # Extract abstract
+
+            articles.append({
+                "Title": title,
+                "Authors": authors,
+                "Link": link,
+                "Abstract": abstract
+            })
 
         page += 1
 
