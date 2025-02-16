@@ -11,7 +11,9 @@ def extract_abstract(article_url):
         if response.status_code != 200:
             if response.status_code == 403:
                 #some sites block scraping
-                return "Forbitten 403"
+                return "Forbitten 403 - site blocked scraping"
+            elif response.status_code == 418:
+                return "Forbitten 418 - site blocked scraping"
             else:
                 return "Abstract not found"
 
@@ -19,12 +21,16 @@ def extract_abstract(article_url):
 
         # Define possible abstract locations
         abstract_selectors = [
-            'section#abstract div[role="paragraph"]',  # Example 1
-            'div.c-article-section__content',  # Example 2
-            'section#abstract p',  # Example 3
-            'div.Abstract__block__text p',  # Example 4
-            'div.abstract',  # Generic case
-            'p.abstract',  # Another possible case
+            'div.c-article-section__content',  # Example 1
+            'section#abstract p',  # Example 2
+            'section#html-abstract div.html-p',  # Example 3
+            'blockquote.abstract.mathjax',
+            'div.JournalAbstract p.mb15',
+            'section.item.abstract > div[style="text-align:justify;"]',
+            'section.item.abstract > p',
+            'article.abstract',
+            'div.card-body.acl-abstract > span',
+            'div.hlFld-Abstract > p.last'
         ]
 
         # Try each selector
