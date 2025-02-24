@@ -48,7 +48,7 @@ def scrape_scholar_articles(query, num_pages, year_low, year_high):
     articles = []
     page = 0
     while page < num_pages:
-        url = f"https://scholar.google.com/scholar?start={page*10}&q={query}&hl=el&as_ylo={year_low}&as_yhi={year_high}"
+        url = f"https://scholar.google.com/scholar?start={page*10}&q={query}&hl=en&as_ylo={year_low}&as_yhi={year_high}"
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
         results = soup.find_all("div", class_="gs_ri")
@@ -59,9 +59,17 @@ def scrape_scholar_articles(query, num_pages, year_low, year_high):
             link = result.find("a")["href"]
             abstract = extract_abstract(link)  # Extract abstract
 
+            # Get the citation count
+            citation_link = result.find('a', string=lambda x: x and 'Cited by' in x)
+            if citation_link:
+                citations = citation_link.text.split()[-1]  # Get the number after 'Cited by'
+            else:
+                citations = '0'  # Default to 0 if no citation info is found
+
             articles.append({
                 "Title": title,
                 "Authors": authors,
+                "Cited by": citations,
                 "Link": link,
                 "Abstract": abstract
             })
