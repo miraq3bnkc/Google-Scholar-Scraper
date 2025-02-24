@@ -1,3 +1,4 @@
+import re
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -64,12 +65,17 @@ def scrape_scholar_articles(query, num_pages, year_low, year_high):
             if citation_link:
                 citations = citation_link.text.split()[-1]  # Get the number after 'Cited by'
             else:
-                citations = '0'  # Default to 0 if no citation info is found
+                citations = '0'
+
+            # Extract the year using regex (year is a 4-digit number)
+            year_match = re.search(r'(\d{4})(?=\s*-)', authors)
+            year = year_match.group(1) if year_match else 'Unknown'  #'Unknown' if year not found
 
             articles.append({
                 "Title": title,
                 "Authors": authors,
                 "Cited by": citations,
+                "Year": year,
                 "Link": link,
                 "Abstract": abstract
             })
